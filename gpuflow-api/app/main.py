@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.core.config import CONFIG
 from app.db.session import get_db
+from app.api.v1.router import router as api_router
+from app.db.base import Base
 
 app = FastAPI(title=CONFIG.PROJECT_NAME)
 
@@ -20,6 +22,8 @@ def health_check(db:Session = Depends(get_db)):
         "project": CONFIG.PROJECT_NAME,
         "version": CONFIG.VERSION
     }
+
+app.include_router(api_router, prefix="/api/v1")
 
 if __name__ == "__main__":
     import uvicorn

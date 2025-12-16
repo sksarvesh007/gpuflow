@@ -23,8 +23,5 @@ class Job(Base):
     started_at = Column(DateTime(timezone=True), nullable=True)
     completed_at = Column(DateTime(timezone=True), nullable=True)
     
-    creator = relationship("User", back_populates="jobs")
+    owner = relationship("User", back_populates="jobs")
     machine = relationship("Machine", back_populates="jobs")
-
-
-    
