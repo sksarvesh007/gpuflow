@@ -4,7 +4,6 @@ from sqlalchemy import text
 from app.core.config import CONFIG
 from app.db.session import get_db
 from app.api.v1.router import router as api_router
-from app.db.base import Base
 
 app = FastAPI(title=CONFIG.PROJECT_NAME)
 
