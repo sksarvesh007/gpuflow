@@ -1,5 +1,5 @@
 def main():
-    print("Hello from gpuflow-backend!")
+    print("Hello from gpuflow-api!")
 
 
 if __name__ == "__main__":
