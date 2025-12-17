@@ -21,3 +21,13 @@ dependencies = [
     "python-multipart>=0.0.20",
     "pyjwt>=2.10.1",
 ]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
