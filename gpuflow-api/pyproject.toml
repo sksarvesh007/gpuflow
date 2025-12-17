@@ -20,6 +20,7 @@ dependencies = [
     "python-jose[cryptography]>=3.5.0",
     "python-multipart>=0.0.20",
     "pyjwt>=2.10.1",
+    "ruff>=0.14.9",
 ]
 
 [tool.ruff]
@@ -27,7 +28,7 @@ line-length = 88
 target-version = "py311"
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
