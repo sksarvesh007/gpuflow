@@ -46,5 +46,5 @@ jobs:
           
       - name: Run Code Quality Check
         run: |
-          uvx run ty
-          
+          uvx ty check
+
