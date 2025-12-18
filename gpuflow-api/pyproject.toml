@@ -34,4 +34,4 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ty.environment]
-root = ["./gpuflow-api/app"]
+root = ["./app"]
