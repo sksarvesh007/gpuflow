@@ -1,12 +1,11 @@
 from typing import Dict
 from fastapi import WebSocket
-from uuid import UUID
 
 
 class ConnectionManager:
     def __init__(self):
         # keeps track of the active connections {machine_id: websocket_connection}
-        self.active_connections: Dict[UUID, WebSocket] = {}
+        self.active_connections: Dict[str, WebSocket] = {}
 
     async def connect(self, machine_id: str, websocket: WebSocket):
         await websocket.accept()

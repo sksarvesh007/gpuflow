@@ -16,4 +16,4 @@ class Settings(BaseSettings):
         env_file = "dev.env"
 
 
-CONFIG = Settings()
+CONFIG = Settings()  # type: ignore

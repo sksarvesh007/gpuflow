@@ -17,7 +17,7 @@ async def websocket_endpoint(
         return
 
     machine_id = str(machine.id)
-    await manager.connect(websocket, machine_id)
+    await manager.connect(machine_id, websocket)
 
     machine.is_online = True
     machine.status = "idle"

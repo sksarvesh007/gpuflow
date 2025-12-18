@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   ruff-format:
@@ -26,3 +27,24 @@ jobs:
       - name: Check Ruff formatting
         run: |
           ruff format --check .
+
+  quality:
+    name: Code quality checker
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install uv
+        run: |
+          pip install uv
+          
+      - name: Run Code Quality Check
+        run: |
+          uvx run ty
+          
