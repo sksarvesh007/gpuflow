@@ -21,6 +21,7 @@ dependencies = [
     "python-multipart>=0.0.20",
     "pyjwt>=2.10.1",
     "ruff>=0.14.9",
+    "pre-commit>=4.0.1",
 ]
 
 [tool.ruff]
