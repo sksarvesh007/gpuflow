@@ -9,7 +9,7 @@ app = FastAPI(title=CONFIG.PROJECT_NAME)
 
 
 @app.get("/")
-def health_check(db: Session = Depends(get_db)):
+def health_check(db: Session = Depends(get_db)) -> dict[str, str]:
     try:
         db.execute(text("SELECT 1"))
         db_status = "connected"
