@@ -17,3 +17,9 @@ class JobResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class JobUpdate(BaseModel):
+    status: str
+    result: Optional[str] = None
+    error_message: Optional[str] = None

@@ -3,8 +3,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from app.core.config import CONFIG
 from app.models.users import User
+from app.models.machine import Machine
 from app.db.session import get_db
 from sqlalchemy.orm import Session
+from fastapi import Header
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=CONFIG.API_V1_STR + "/login/access-token")
 
@@ -28,3 +30,16 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+def get_current_machine(
+    authorization: str = Header(None), db: Session = Depends(get_db)
+) -> Machine:
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing Authentication")
+
+    token = authorization.replace("Bearer ", "")
+    machine = db.query(Machine).filter(Machine.auth_token == token).first()
+    if not machine:
+        raise HTTPException(status_code=401, detail="Invalid Machine token")
+    return machine
