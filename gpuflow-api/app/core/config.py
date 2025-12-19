@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
 
+    REDIS_URL: str
+
     class Config:
         env_file = "dev.env"
 

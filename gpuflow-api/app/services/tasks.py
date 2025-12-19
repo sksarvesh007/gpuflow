@@ -4,6 +4,11 @@ from app.db.session import SessionLocal
 from app.models.job import Job
 from app.models.machine import Machine
 from uuid import UUID
+import redis
+import json
+from app.core.config import CONFIG
+
+redis_client = redis.from_url(CONFIG.CELERY_RESULT_BACKEND, decode_responses=True)
 
 
 @celery_app.task(acks_late=True)
@@ -31,6 +36,14 @@ def process_job_task(job_id: str):
 
             db.commit()
             print("Job assigned to machine: ", machine.id)
+
+            message = {
+                "event": "START_JOB",
+                "machine_id": str(machine.id),
+                "job_id": str(job.id),
+                "code": "print('Hello from Remote GPU')",
+            }
+            redis_client.publish("gpu_events", json.dumps(message))
         else:
             print("No machines available, retrying later")
     except Exception as e:

@@ -4,8 +4,37 @@ from sqlalchemy import text
 from app.core.config import CONFIG
 from app.db.session import get_db
 from app.api.v1.router import router as api_router
+import asyncio
+import json
+from contextlib import asynccontextmanager
+from app.services.websocket_manager import manager
+from app.services.redis_bridge import redis_bridge
 
-app = FastAPI(title=CONFIG.PROJECT_NAME)
+
+async def listen_to_Redis():
+    pubsub = redis_bridge.redis.pubsub()
+    await pubsub.subscribe("gpu_events")
+
+    async for message in pubsub.listen():
+        if message["type"] == "message":
+            data = json.loads(message["data"])
+            target_machine_id = data.get("machine_id")
+            event_type = data.get("event")
+
+            if event_type == "START_JOB":
+                print("Bridging job to websocket : ", target_machine_id)
+                await manager.send_message(target_machine_id, data)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(listen_to_Redis())
+    yield
+    task.cancel()
+    await redis_bridge.close()
+
+
+app = FastAPI(title=CONFIG.PROJECT_NAME, lifespan=lifespan)
 
 
 @app.get("/")
