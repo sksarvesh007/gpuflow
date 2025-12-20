@@ -3,6 +3,7 @@ from app.core.celery_app import celery_app
 from app.db.session import SessionLocal
 from app.models.job import Job
 from app.models.machine import Machine
+from app.models.users import User  # noqa: F401
 from uuid import UUID
 import redis
 import json
@@ -41,7 +42,7 @@ def process_job_task(job_id: str):
                 "event": "START_JOB",
                 "machine_id": str(machine.id),
                 "job_id": str(job.id),
-                "code": "print('Hello from Remote GPU')",
+                "code": job.pickled_function.decode("utf-8"),
             }
             redis_client.publish("gpu_events", json.dumps(message))
         else:
