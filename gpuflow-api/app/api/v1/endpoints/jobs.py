@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.models.job import Job
+from app.models.users import User
 from app.schemas.job import JobCreate, JobResponse, JobUpdate
 from app.services.tasks import process_job_task
 from datetime import datetime, timezone
@@ -51,3 +52,14 @@ def update_job_status(
     db.commit()
     db.refresh(job)
     return job
+
+
+@router.get("/", response_model=list[JobResponse])
+def get_jobs(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+) -> list[Job]:
+    """this returns all the jobs created by the current user"""
+    return db.query(Job).filter(Job.creator_id == current_user.id).all()
