@@ -29,7 +29,7 @@ export default function Home() {
             </Button>
           </Link>
           <Link href="/register">
-            <Button variant="outline" size="lg" className="border-slate-700 hover:bg-slate-900 text-lg px-8 py-6">
+            <Button variant="outline" size="lg" className="bg-purple-600 hover:bg-purple-700 text-lg px-8 py-6">
               Become a Provider
             </Button>
           </Link>
