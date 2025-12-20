@@ -9,6 +9,7 @@ import json
 from contextlib import asynccontextmanager
 from app.services.websocket_manager import manager
 from app.services.redis_bridge import redis_bridge
+from fastapi.middleware.cors import CORSMiddleware
 
 
 async def listen_to_Redis():
@@ -35,6 +36,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=CONFIG.PROJECT_NAME, lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,  # type: ignore[arg-type]
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
