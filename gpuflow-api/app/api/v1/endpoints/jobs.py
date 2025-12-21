@@ -35,7 +35,7 @@ def update_job_status(
     current_machine: Machine = Depends(deps.get_current_machine),
     db: Session = Depends(deps.get_db),
 ):
-    job = db.query(Job).filter(Job.id == job_id).first()
+    job: Job | None = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     if str(job.machine_id) != str(current_machine.id):
@@ -43,12 +43,14 @@ def update_job_status(
     if job_update.status:
         job.status = job_update.status
     if job_update.status == "running":
-        job.started_at = datetime.now(timezone.utc)
+        job.started_at: datetime = datetime.now(timezone.utc)
     if job_update.status == "completed":
-        job.completed_at = datetime.now(timezone.utc)
+        job.completed_at: datetime = datetime.now(timezone.utc)
         job.result_url = job_update.result
         if job.machine:
             job.machine.status = "idle"
+    if job_update.error_message:
+        job.error_message = job_update.error_message
     db.commit()
     db.refresh(job)
     return job
@@ -61,5 +63,18 @@ def get_jobs(
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ) -> list[Job]:
-    """this returns all the jobs created by the current user"""
     return db.query(Job).filter(Job.creator_id == current_user.id).all()
+
+
+@router.get("/{job_id}", response_model=JobResponse)
+def get_job(
+    job_id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+) -> Job:
+    job: Job | None = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if job.creator_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this job")
+    return job

@@ -14,6 +14,9 @@ class JobResponse(BaseModel):
     status: str
     creator_id: UUID
     created_at: datetime
+    machine_id: Optional[UUID] = None
+    result_url: Optional[str] = None
+    error_message: Optional[str] = None
 
     class Config:
         from_attributes = True

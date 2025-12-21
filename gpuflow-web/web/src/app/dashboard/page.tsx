@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Server, Play, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -154,23 +155,22 @@ export default function Dashboard() {
               <p className="text-slate-500 italic">No jobs run yet.</p>
             ) : (
               jobs.map((job) => (
-                <Card
-                  key={job.id}
-                  className="bg-slate-900 border-slate-800 text-white"
-                >
+              <Link href={`/dashboard/jobs/${job.id}`} key={job.id} className="block group">
+                <Card className="bg-slate-900 border-slate-800 text-white group-hover:border-purple-500/50 transition-colors">
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
-                      <p className="font-mono text-sm text-purple-400">
-                        ID: {job.id.slice(0, 8)}...
+                      <p className="font-mono text-sm text-purple-400 group-hover:text-purple-300">
+                        ID: {job.id.slice(0, 8)}
                       </p>
                       <p className="text-xs text-slate-500">
-                        Created: {new Date(job.created_at).toLocaleString()}
+                        {new Date(job.created_at).toLocaleString()}
                       </p>
                     </div>
                     <StatusBadge status={job.status} />
                   </CardContent>
                 </Card>
-              ))
+              </Link>
+            ))
             )}
           </div>
         </TabsContent>
