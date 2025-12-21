@@ -22,10 +22,11 @@ export default function RegisterPage() {
 
     try {
       await api.post("/users/", { email, password });
-      
+
       router.push("/login?registered=true");
-    } catch (err: any) {
-      setError(err.response?.data?.detail || "Registration failed");
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -41,8 +42,8 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
-              <Input 
-                type="email" 
+              <Input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
@@ -50,11 +51,11 @@ export default function RegisterPage() {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Password</label>
-              <Input 
-                type="password" 
+              <Input
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-slate-800 border-slate-700 text-white"
@@ -65,7 +66,11 @@ export default function RegisterPage() {
 
             {error && <p className="text-red-400 text-sm">{error}</p>}
 
-            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Sign Up"}
             </Button>
 

@@ -16,12 +16,12 @@ export default function NewJobPage() {
   const [files, setFiles] = useState<FileMap>({
     "main.py": {
       language: "python",
-      content: `import sys\nfrom utils import hello\n\nprint("--- Starting Job ---")\nhello()\nprint(f"Python: {sys.version}")`
+      content: `import sys\nfrom utils import hello\n\nprint("--- Starting Job ---")\nhello()\nprint(f"Python: {sys.version}")`,
     },
     "utils.py": {
       language: "python",
-      content: `def hello():\n    print("Hello from utils.py!")`
-    }
+      content: `def hello():\n    print("Hello from utils.py!")`,
+    },
   });
 
   const handleSubmit = async () => {
@@ -29,13 +29,13 @@ export default function NewJobPage() {
     try {
       // 1. Pack all files into a JSON string to send to backend
       const payload = JSON.stringify(files);
-      
+
       await api.post("/jobs/", {
         code_string: payload, // We send the whole project as JSON
-        requirements: {}
+        requirements: {},
       });
       router.push("/dashboard?job_started=true");
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to submit job");
     } finally {
       setLoading(false);
@@ -45,18 +45,23 @@ export default function NewJobPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        
         {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Code2 className="text-blue-400"/> New Training Job
+            <Code2 className="text-blue-400" /> New Training Job
           </h1>
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={loading}
             className="bg-green-600 hover:bg-green-700 px-8"
           >
-            {loading ? "Scheduling..." : <><Play className="w-4 h-4 mr-2"/> Run Project</>}
+            {loading ? (
+              "Scheduling..."
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-2" /> Run Project
+              </>
+            )}
           </Button>
         </div>
 
@@ -69,10 +74,12 @@ export default function NewJobPage() {
             <CardTitle className="text-sm">Job Configuration</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-slate-400">
-             <p>All files will be uploaded to the GPU. Ensure your entry point is named <b>main.py</b>.</p>
+            <p>
+              All files will be uploaded to the GPU. Ensure your entry point is
+              named <b>main.py</b>.
+            </p>
           </CardContent>
         </Card>
-
       </div>
     </div>
   );

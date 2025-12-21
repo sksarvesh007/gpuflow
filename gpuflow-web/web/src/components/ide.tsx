@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Folder, FileCode, Plus, Trash2, Code2, Minus } from "lucide-react";
+import { FileCode, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -51,7 +51,7 @@ export function IDE({ files, setFiles }: IDEProps) {
   const deleteFile = (name: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (name === "main.py") return alert("Cannot delete main entry point");
-    
+
     const newFiles = { ...files };
     delete newFiles[name];
     setFiles(newFiles);
@@ -60,15 +60,14 @@ export function IDE({ files, setFiles }: IDEProps) {
 
   return (
     <div className="flex h-[600px] border border-slate-800 rounded-lg overflow-hidden bg-[#1e1e1e]">
-      
       {/* LEFT SIDEBAR: FILE EXPLORER */}
       <div className="w-64 bg-[#252526] flex flex-col border-r border-slate-800">
         <div className="p-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
           <span>Explorer</span>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-5 w-5 hover:bg-slate-700" 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 hover:bg-slate-700"
             onClick={() => setIsCreating(true)}
           >
             <Plus className="h-4 w-4" />
@@ -93,8 +92,8 @@ export function IDE({ files, setFiles }: IDEProps) {
                   <span>{fileName}</span>
                 </div>
                 {fileName !== "main.py" && (
-                  <Trash2 
-                    className="w-3 h-3 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" 
+                  <Trash2
+                    className="w-3 h-3 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => deleteFile(fileName, e)}
                   />
                 )}
@@ -125,7 +124,7 @@ export function IDE({ files, setFiles }: IDEProps) {
         {/* Tab Bar */}
         <div className="flex bg-[#1e1e1e] border-b border-[#2d2d2d]">
           <div className="px-4 py-2 text-sm bg-[#1e1e1e] border-r border-[#2d2d2d] text-white flex items-center gap-2">
-             <FileCode className="w-4 h-4 text-yellow-400" /> {activeFile}
+            <FileCode className="w-4 h-4 text-yellow-400" /> {activeFile}
           </div>
         </div>
 

@@ -1,22 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Server, Play, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
+interface User {
+  email: string;
+  credits: number;
+}
+
+interface Machine {
+  id: string;
+  name: string;
+  gpu_name?: string;
+  vram_gb?: number;
+  is_online: boolean;
+}
+
+interface Job {
+  id: string;
+  status: string;
+  created_at: string;
+}
+
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [machines, setMachines] = useState<any[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [machines, setMachines] = useState<Machine[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       // 1. Get Profile
       const userRes = await api.get("/users/me");
@@ -35,7 +54,7 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -44,7 +63,7 @@ export default function Dashboard() {
       return;
     }
     fetchData();
-  }, []);
+  }, [fetchData, router]);
 
   if (loading)
     return <div className="p-8 text-white">Loading Dashboard...</div>;
@@ -155,22 +174,26 @@ export default function Dashboard() {
               <p className="text-slate-500 italic">No jobs run yet.</p>
             ) : (
               jobs.map((job) => (
-              <Link href={`/dashboard/jobs/${job.id}`} key={job.id} className="block group">
-                <Card className="bg-slate-900 border-slate-800 text-white group-hover:border-purple-500/50 transition-colors">
-                  <CardContent className="p-4 flex justify-between items-center">
-                    <div>
-                      <p className="font-mono text-sm text-purple-400 group-hover:text-purple-300">
-                        ID: {job.id.slice(0, 8)}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {new Date(job.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                    <StatusBadge status={job.status} />
-                  </CardContent>
-                </Card>
-              </Link>
-            ))
+                <Link
+                  href={`/dashboard/jobs/${job.id}`}
+                  key={job.id}
+                  className="block group"
+                >
+                  <Card className="bg-slate-900 border-slate-800 text-white group-hover:border-purple-500/50 transition-colors">
+                    <CardContent className="p-4 flex justify-between items-center">
+                      <div>
+                        <p className="font-mono text-sm text-purple-400 group-hover:text-purple-300">
+                          ID: {job.id.slice(0, 8)}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(job.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <StatusBadge status={job.status} />
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))
             )}
           </div>
         </TabsContent>
@@ -180,7 +203,15 @@ export default function Dashboard() {
 }
 
 // Small Helper Components
-function StatsCard({ title, value, icon }: any) {
+function StatsCard({
+  title,
+  value,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}) {
   return (
     <Card className="bg-slate-900 border-slate-800 text-white">
       <CardContent className="p-6 flex items-center justify-between">
@@ -195,7 +226,7 @@ function StatsCard({ title, value, icon }: any) {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: any = {
+  const colors: Record<string, string> = {
     online: "bg-green-500/20 text-green-400",
     offline: "bg-red-500/20 text-red-400",
     completed: "bg-green-500/20 text-green-400",

@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       const formData = new FormData();
-      formData.append("username", email); 
+      formData.append("username", email);
       formData.append("password", password);
 
       const response = await api.post("/login/access-token", formData, {
@@ -34,9 +34,9 @@ export default function LoginPage() {
       localStorage.setItem("user_email", email);
 
       router.push("/dashboard");
-
-    } catch (err: any) {
-      setError(err.response?.data?.detail || "Invalid email or password");
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || "Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -52,19 +52,19 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
-              <Input 
-                type="email" 
+              <Input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-slate-800 border-slate-700 text-white"
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Password</label>
-              <Input 
-                type="password" 
+              <Input
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-slate-800 border-slate-700 text-white"
@@ -74,7 +74,11 @@ export default function LoginPage() {
 
             {error && <p className="text-red-400 text-sm">{error}</p>}
 
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </Button>
 

@@ -21,7 +21,7 @@ export default function AddMachinePage() {
     try {
       const res = await api.post("/machines/", { name });
       setToken(res.data.auth_token); // Save token to show user
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to create machine");
     } finally {
       setLoading(false);
@@ -39,16 +39,22 @@ export default function AddMachinePage() {
             /* FORM STATE */
             <form onSubmit={handleRegister} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-400">Machine Name</label>
-                <Input 
-                  placeholder="e.g. Home Gaming Rig" 
+                <label className="text-sm font-medium text-slate-400">
+                  Machine Name
+                </label>
+                <Input
+                  placeholder="e.g. Home Gaming Rig"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="bg-slate-800 border-slate-700 text-white"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                disabled={loading}
+              >
                 {loading ? "Generating Keys..." : "Register & Get Token"}
               </Button>
             </form>
@@ -78,8 +84,8 @@ export default function AddMachinePage() {
                 </AlertDescription>
               </Alert>
 
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full"
                 onClick={() => router.push("/dashboard")}
               >
