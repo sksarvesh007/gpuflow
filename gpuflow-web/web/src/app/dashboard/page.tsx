@@ -30,17 +30,23 @@ export default function Dashboard() {
       setJobs(jobsRes.data);
     } catch (err) {
       console.error("Failed to fetch data", err);
-      router.push("/login"); 
+      router.push("/login");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
     fetchData();
   }, []);
 
-  if (loading) return <div className="p-8 text-white">Loading Dashboard...</div>;
+  if (loading)
+    return <div className="p-8 text-white">Loading Dashboard...</div>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
@@ -53,7 +59,9 @@ export default function Dashboard() {
           <p className="text-slate-400">Welcome back, {user?.email}</p>
         </div>
         <div className="flex gap-4 items-center bg-slate-900 p-2 rounded-lg border border-slate-800">
-          <span className="px-3 text-sm text-slate-300">Credits: ${user?.credits}</span>
+          <span className="px-3 text-sm text-slate-300">
+            Credits: ${user?.credits}
+          </span>
           <Button variant="outline" size="sm" onClick={fetchData}>
             <RefreshCw className="w-4 h-4 mr-2" /> Refresh
           </Button>
@@ -62,20 +70,20 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatsCard 
-          title="Active Machines" 
-          value={machines.length} 
-          icon={<Server className="text-blue-400" />} 
+        <StatsCard
+          title="Active Machines"
+          value={machines.length}
+          icon={<Server className="text-blue-400" />}
         />
-        <StatsCard 
-          title="Total Jobs" 
-          value={jobs.length} 
-          icon={<Play className="text-green-400" />} 
+        <StatsCard
+          title="Total Jobs"
+          value={jobs.length}
+          icon={<Play className="text-green-400" />}
         />
-        <StatsCard 
-          title="Avg. Cost / Hr" 
-          value="$0.45" 
-          icon={<div className="text-yellow-400 font-bold">$</div>} 
+        <StatsCard
+          title="Avg. Cost / Hr"
+          value="$0.45"
+          icon={<div className="text-yellow-400 font-bold">$</div>}
         />
       </div>
 
@@ -90,26 +98,37 @@ export default function Dashboard() {
         <TabsContent value="machines" className="mt-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Your GPU Rigs</h2>
-            <Button onClick={() => router.push("/dashboard/add-machine")} className="bg-purple-600 hover:bg-purple-700">
+            <Button
+              onClick={() => router.push("/dashboard/add-machine")}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
               <Plus className="w-4 h-4 mr-2" /> Register Machine
             </Button>
           </div>
 
           <div className="grid gap-4">
             {machines.length === 0 ? (
-              <p className="text-slate-500 italic">No machines registered yet.</p>
+              <p className="text-slate-500 italic">
+                No machines registered yet.
+              </p>
             ) : (
               machines.map((m) => (
-                <Card key={m.id} className="bg-slate-900 border-slate-800 text-white">
+                <Card
+                  key={m.id}
+                  className="bg-slate-900 border-slate-800 text-white"
+                >
                   <CardContent className="p-6 flex justify-between items-center">
                     <div>
                       <h3 className="font-bold text-lg">{m.name}</h3>
                       <p className="text-sm text-slate-400">
-                        {m.gpu_name || "Waiting for connection..."} • {m.vram_gb ? `${m.vram_gb}GB VRAM` : ""}
+                        {m.gpu_name || "Waiting for connection..."} •{" "}
+                        {m.vram_gb ? `${m.vram_gb}GB VRAM` : ""}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <StatusBadge status={m.is_online ? "online" : "offline"} />
+                      <StatusBadge
+                        status={m.is_online ? "online" : "offline"}
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -122,21 +141,31 @@ export default function Dashboard() {
         <TabsContent value="jobs" className="mt-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Recent Jobs</h2>
-            <Button onClick={() => router.push("/dashboard/new-job")} className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              onClick={() => router.push("/dashboard/new-job")}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               <Play className="w-4 h-4 mr-2" /> New Training Job
             </Button>
           </div>
 
           <div className="space-y-3">
-             {jobs.length === 0 ? (
+            {jobs.length === 0 ? (
               <p className="text-slate-500 italic">No jobs run yet.</p>
             ) : (
               jobs.map((job) => (
-                <Card key={job.id} className="bg-slate-900 border-slate-800 text-white">
+                <Card
+                  key={job.id}
+                  className="bg-slate-900 border-slate-800 text-white"
+                >
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
-                      <p className="font-mono text-sm text-purple-400">ID: {job.id.slice(0, 8)}...</p>
-                      <p className="text-xs text-slate-500">Created: {new Date(job.created_at).toLocaleString()}</p>
+                      <p className="font-mono text-sm text-purple-400">
+                        ID: {job.id.slice(0, 8)}...
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Created: {new Date(job.created_at).toLocaleString()}
+                      </p>
                     </div>
                     <StatusBadge status={job.status} />
                   </CardContent>
@@ -176,7 +205,11 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase ${colors[status] || "bg-gray-500"}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-medium uppercase ${
+        colors[status] || "bg-gray-500"
+      }`}
+    >
       {status}
     </span>
   );
