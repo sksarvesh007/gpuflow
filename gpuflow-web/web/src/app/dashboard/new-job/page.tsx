@@ -35,7 +35,7 @@ export default function NewJobPage() {
         requirements: {},
       });
       router.push("/dashboard?job_started=true");
-    } catch (_err) {
+    } catch {
       alert("Failed to submit job");
     } finally {
       setLoading(false);

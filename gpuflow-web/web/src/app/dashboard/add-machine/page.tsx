@@ -21,7 +21,7 @@ export default function AddMachinePage() {
     try {
       const res = await api.post("/machines/", { name });
       setToken(res.data.auth_token); // Save token to show user
-    } catch (_err) {
+    } catch {
       alert("Failed to create machine");
     } finally {
       setLoading(false);
