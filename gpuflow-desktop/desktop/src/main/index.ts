@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { ProviderEngine } from './provider-engine';
 
 function createWindow(): void {
   // Create the browser window.
@@ -16,6 +17,18 @@ function createWindow(): void {
       sandbox: false
     }
   })
+  let engine : ProviderEngine | null = null;
+  ipcMain.on('start-provider', (event, token) => {
+    if (engine) engine.stop();
+    engine = new ProviderEngine(token, mainWindow);
+    engine.start();
+  });
+  ipcMain.on('stop-provider', () => {
+    if (engine) engine.stop();
+    engine = null;
+  });
+
+
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -33,6 +46,10 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  mainWindow.on('close', () => {
+    if (engine) engine.stop();
+    engine = null;
+  });
 }
 
 // This method will be called when Electron has finished
