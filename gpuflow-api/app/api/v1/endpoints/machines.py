@@ -1,5 +1,5 @@
 import secrets
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
@@ -16,13 +16,27 @@ def register_machine(
     db: Session = Depends(get_db),
     current_user: User = Depends(deps.get_current_user),
 ):
+    existing = (
+        db.query(Machine).filter(Machine.device_id == machine_in.device_id).first()
+    )
+
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="This device is already registered. Only one machine per device is allowed.",
+        )
+
     new_token = secrets.token_urlsafe(32)
     new_machine = Machine(
         name=machine_in.name,
         description=machine_in.description,
+        device_id=machine_in.device_id,
         owner_id=current_user.id,
         auth_token=new_token,
+        gpu_name=machine_in.gpu_name,
+        vram_gb=machine_in.vram_gb,
         status="offline",
+        is_online=False,
     )
 
     db.add(new_machine)

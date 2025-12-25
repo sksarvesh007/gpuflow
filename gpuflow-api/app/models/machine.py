@@ -14,6 +14,7 @@ class Machine(Base):
     name = Column(String, nullable=False)
     description = Column(String)
     auth_token = Column(String, unique=True, index=True)
+    device_id = Column(String, unique=True, index=True)
 
     # specs for the rig
     gpu_name = Column(String)
